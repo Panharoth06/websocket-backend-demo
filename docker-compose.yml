@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:16
+    container_name: users_websocket_db
+    environment:
+      POSTGRES_DB: users_websocket_db
+      POSTGRES_USER: raidenz
+      POSTGRES_PASSWORD: qwer
+    ports:
+      - "5555:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    restart: always
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: users_management_websocket
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/users_websocket_db
+      SPRING_DATASOURCE_USERNAME: raidenz
+      SPRING_DATASOURCE_PASSWORD: qwer
+      SPRING_PROFILES_ACTIVE: native
+    ports:
+      - "8080:8080"
+    restart: always
+
+volumes:
+  db-data:
