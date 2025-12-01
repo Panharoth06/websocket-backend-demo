@@ -1,4 +1,4 @@
-package com.raidenz.websocketbackend;
+package com.raidenz.websocketbackend.users;
 
 import jakarta.persistence.*;
 import lombok.Getter;

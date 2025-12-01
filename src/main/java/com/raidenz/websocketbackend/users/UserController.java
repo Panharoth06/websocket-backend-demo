@@ -1,8 +1,8 @@
-package com.raidenz.websocketbackend;
+package com.raidenz.websocketbackend.users;
 
-import com.raidenz.websocketbackend.dto.UserCreateRequest;
-import com.raidenz.websocketbackend.dto.UserResponse;
-import com.raidenz.websocketbackend.dto.UserUpdateRequest;
+import com.raidenz.websocketbackend.users.dto.UserCreateRequest;
+import com.raidenz.websocketbackend.users.dto.UserResponse;
+import com.raidenz.websocketbackend.users.dto.UserUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

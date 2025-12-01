@@ -1,4 +1,4 @@
-package com.raidenz.websocketbackend;
+package com.raidenz.websocketbackend.users;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

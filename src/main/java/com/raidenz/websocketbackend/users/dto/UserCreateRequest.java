@@ -1,4 +1,4 @@
-package com.raidenz.websocketbackend.dto;
+package com.raidenz.websocketbackend.users.dto;
 
 public record UserCreateRequest(
         String username,

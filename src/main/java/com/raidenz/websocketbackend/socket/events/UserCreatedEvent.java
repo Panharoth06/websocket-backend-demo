@@ -1,17 +1,5 @@
 package com.raidenz.websocketbackend.socket.events;
 
-import com.raidenz.websocketbackend.User;
-import lombok.Getter;
-import org.springframework.context.ApplicationEvent;
+import com.raidenz.websocketbackend.users.dto.UserResponse;
 
-@Getter
-public class UserCreatedEvent extends ApplicationEvent {
-
-    private final User user;
-
-    public UserCreatedEvent(User user) {
-        super(user);
-        this.user = user;
-    }
-
-}
+public record UserCreatedEvent(UserResponse user) { }

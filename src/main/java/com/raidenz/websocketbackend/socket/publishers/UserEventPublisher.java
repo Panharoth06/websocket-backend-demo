@@ -1,27 +1,27 @@
-package com.raidenz.websocketbackend.socket;
+package com.raidenz.websocketbackend.socket.publishers;
 
-import com.raidenz.websocketbackend.dto.UserResponse;
+import com.raidenz.websocketbackend.users.dto.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class UserWebSocketPublisher {
+public class UserEventPublisher {
 
     private final SimpMessagingTemplate messagingTemplate;
 
     private static final String TOPIC = "/topic/users";
 
     public void sendCreated(UserResponse payload) {
-        messagingTemplate.convertAndSend(TOPIC + "/created", payload);
+        messagingTemplate.convertAndSend("%s/created".formatted(TOPIC), payload);
     }
 
     public void sendUpdated(UserResponse payload) {
-        messagingTemplate.convertAndSend(TOPIC + "/updated", payload);
+        messagingTemplate.convertAndSend("%s/updated".formatted(TOPIC), payload);
     }
 
     public void sendDeleted(String id) {
-        messagingTemplate.convertAndSend(TOPIC + "/deleted", id);
+        messagingTemplate.convertAndSend("%s/deleted".formatted(TOPIC), id);
     }
 }

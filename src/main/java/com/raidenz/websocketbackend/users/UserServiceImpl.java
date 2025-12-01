@@ -1,8 +1,8 @@
-package com.raidenz.websocketbackend;
+package com.raidenz.websocketbackend.users;
 
-import com.raidenz.websocketbackend.dto.UserCreateRequest;
-import com.raidenz.websocketbackend.dto.UserResponse;
-import com.raidenz.websocketbackend.dto.UserUpdateRequest;
+import com.raidenz.websocketbackend.users.dto.UserCreateRequest;
+import com.raidenz.websocketbackend.users.dto.UserResponse;
+import com.raidenz.websocketbackend.users.dto.UserUpdateRequest;
 import com.raidenz.websocketbackend.socket.events.UserCreatedEvent;
 import com.raidenz.websocketbackend.socket.events.UserDeletedEvent;
 import com.raidenz.websocketbackend.socket.events.UserUpdatedEvent;
@@ -21,6 +21,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher eventPublisher;
+    private final UserMapper userMapper;
 
     @Override
     public UserResponse createUser(UserCreateRequest userCreateRequest) {
@@ -28,21 +29,18 @@ public class UserServiceImpl implements UserService {
         boolean isExisting = userRepository.existsByUsername(userCreateRequest.username());
 
         if (!isExisting) {
-            User user = new User();
+            User user = userMapper.toUser(userCreateRequest);
+
             String hashedPass = passwordEncoder.encode(userCreateRequest.password());
-            user.setUsername(userCreateRequest.username());
             user.setPassword(hashedPass);
-            user.setEmail(userCreateRequest.email());
+
             user = userRepository.save(user);
 
-            eventPublisher.publishEvent(new UserCreatedEvent(user));
+            UserResponse response = userMapper.toUserResponse(user);
 
-            return UserResponse
-                    .builder()
-                    .username(userCreateRequest.username())
-                    .email(userCreateRequest.email())
-                    .uuid(user.getUuid())
-                    .build();
+            eventPublisher.publishEvent(new UserCreatedEvent(response));
+
+            return response;
         }
         else
             throw new RuntimeException("User already exists");
@@ -53,12 +51,7 @@ public class UserServiceImpl implements UserService {
 
         User user = userRepository.findById(id).orElseThrow();
 
-        return UserResponse
-                .builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .uuid(user.getUuid())
-                .build();
+        return userMapper.toUserResponse(user);
     }
 
     @Override
@@ -67,15 +60,7 @@ public class UserServiceImpl implements UserService {
         List<User> users = userRepository.findAll();
         List<UserResponse> userResponses = new ArrayList<>();
 
-        users.forEach(user -> {
-            UserResponse userResponse = UserResponse
-                    .builder()
-                    .username(user.getUsername())
-                    .email(user.getEmail())
-                    .uuid(user.getUuid())
-                    .build();
-            userResponses.add(userResponse);
-        });
+        users.stream().map(userMapper::toUserResponse).forEach(userResponses::add);
 
         return userResponses;
     }
@@ -106,13 +91,10 @@ public class UserServiceImpl implements UserService {
         user.setPassword(hashedPass);
         user =  userRepository.save(user);
 
-        eventPublisher.publishEvent(new UserUpdatedEvent(user));
+        UserResponse response = userMapper.toUserResponse(user);
 
-        return UserResponse
-                .builder()
-                .username(user.getUsername())
-                .email(user.getEmail())
-                .uuid(user.getUuid())
-                .build();
+        eventPublisher.publishEvent(new UserUpdatedEvent(response));
+
+        return response;
     }
 }

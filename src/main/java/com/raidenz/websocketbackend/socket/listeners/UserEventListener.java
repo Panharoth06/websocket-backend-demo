@@ -1,40 +1,27 @@
 package com.raidenz.websocketbackend.socket.listeners;
 
+import com.raidenz.websocketbackend.socket.publishers.UserEventPublisher;
 import com.raidenz.websocketbackend.socket.events.*;
-import com.raidenz.websocketbackend.socket.UserWebSocketPublisher;
-import com.raidenz.websocketbackend.dto.UserResponse;
-import org.springframework.context.event.EventListener;
-import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@Async
 public class UserEventListener {
 
-    private final UserWebSocketPublisher publisher;
+    private final UserEventPublisher publisher;
 
     @EventListener
     public void handleUserCreated(UserCreatedEvent event) {
-        System.out.println("🔥 HANDLING USER CREATED EVENT: " + event.getUser().getUsername());
-        UserResponse response = UserResponse
-                .builder()
-                .email(event.getUser().getEmail())
-                .username(event.getUser().getUsername())
-                .uuid(event.getUser().getUuid())
-                .build();
-        publisher.sendCreated(response);
-        System.out.println("WEBSOCKET MESSAGE SENT");
+        publisher.sendCreated(event.user());
     }
 
     @EventListener
     public void handleUserUpdated(UserUpdatedEvent event) {
-        UserResponse response = UserResponse
-                .builder()
-                .email(event.getUser().getEmail())
-                .username(event.getUser().getUsername())
-                .uuid(event.getUser().getUuid())
-                .build();
-        publisher.sendUpdated(response);
+        publisher.sendUpdated(event.user());
     }
 
     @EventListener
