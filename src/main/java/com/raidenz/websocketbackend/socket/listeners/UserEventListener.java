@@ -29,3 +29,15 @@ public class UserEventListener {
         publisher.sendDeleted(event.userId());
     }
 }
+
+
+/* If publishing a WebSocket message took 200ms
+
+ * without async:
+ * HTTP → publish event → wait for listener → send websocket message → return HTTP response
+ * The client waits
+ *
+ * with async:
+ * HTTP → publish event → return response immediately
+                       ↳ listener runs in background and sends websocket message
+ */
